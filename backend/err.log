@@ -1,0 +1,32 @@
+✅ Database connected and schema applied.
+=== RUNNING SCHEDULER JOBS INDIVIDUALLY ===
+
+1. Running calculateTrendingTopics()
+[Scheduler] Executing calculateTrendingTopics...
+[Scheduler] calculateTrendingTopics completed. Extracted 0 unique tags.
+-> Current trends computed: []
+
+2. Running sweepUserRiskScores()
+[Scheduler] Executing sweepUserRiskScores...
+[Scheduler] sweepUserRiskScores completed. Flagged 0 accounts.
+
+
+
+D:\Social_Publishing_Moderation_VibeCoding\backend\node_modules\better-sqlite3\lib\methods\wrappers.js:5
+	return this[cppdb].prepare(sql, this, false);
+	                   ^
+SqliteError: no such column: WARNING
+    at Database.prepare (D:\Social_Publishing_Moderation_VibeCoding\backend\node_modules\better-sqlite3\lib\methods\wrappers.js:5:21)
+    at Object.<anonymous> (D:\Social_Publishing_Moderation_VibeCoding\backend\test_scheduler.js:22:25)
+    at Module._compile (node:internal/modules/cjs/loader:1554:14)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:170:5)
+    at node:internal/main/run_main_module:36:49 {
+  code: 'SQLITE_ERROR'
+}
+
+Node.js v22.14.0
