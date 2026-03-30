@@ -243,7 +243,7 @@ function removeCommunityPost(req, res) {
 
   db.prepare(`UPDATE posts SET status = 'REMOVED' WHERE id = ?`).run(postId);
 
-  createNotification(post.user_id, 'moderation_decision', 'Your post was removed by a community moderator.');
+  createNotification(post.user_id, 'moderation_decision', 'Your post was removed by a community moderator.', postId, null);
   return res.json({ message: 'Post removed by community moderator.' });
 }
 

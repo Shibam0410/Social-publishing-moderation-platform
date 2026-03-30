@@ -141,15 +141,17 @@ function enforceModerationSLA() {
         escalateReport.run(report.id);
         const afterReport = { ...report, report_status: 'ESCALATED' };
         
-        auditLog({
-          admin_id: 'system_scheduler',
-          actor_role: 'system',
-          action: 'report.escalated.sla_breach',
-          target_id: report.id,
-          before_state: report,
-          after_state: afterReport,
-          details: { reason: "48H SLA breached. Auto-escalating for senior review." }
-        });
+        auditLog(
+          'system_scheduler',
+          'system',
+          'report.escalated.sla_breach',
+          `report:${report.id}`,
+          {
+            before: report,
+            after: afterReport,
+            details: { reason: '48H SLA breached. Auto-escalating for senior review.' }
+          }
+        );
       });
     })();
     

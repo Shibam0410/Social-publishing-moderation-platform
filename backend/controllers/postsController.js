@@ -18,10 +18,29 @@ function extractAndNotifyMentions(content, sourceUserId, postId) {
     uniqueUsernames.forEach(username => {
       const targetUser = db.prepare(`SELECT id FROM users WHERE username = ?`).get(username);
       if (targetUser && targetUser.id !== sourceUserId) {
-        createNotification(targetUser.id, 'mention', `${sourceUser.username} mentioned you in a post/comment.`);
+        // Include a snippet so the mentioned user knows which post/comment
+        createNotification(targetUser.id, 'mention', `${sourceUser.username} mentioned you in a post/comment.`, postId, sourceUser.username);
       }
     });
   }
+}
+// ── HELPER: Short readable snippet from post content (handles image/poll JSON)
+function postSnippet(content, post_type, maxLen = 60) {
+  if (!content) return '';
+  let text = content.trim();
+  if (post_type === 'image') {
+    try {
+      const parsed = JSON.parse(content);
+      text = parsed.caption || '';
+      if (!text) return '[Image post]';
+    } catch { return '[Image post]'; }
+  }
+  if (post_type === 'poll') {
+    // Content is the poll question
+    text = text || '[Poll]';
+  }
+  const truncated = text.length > maxLen ? text.slice(0, maxLen) + '…' : text;
+  return `"${truncated}"`;
 }
 
 function attachPollsAndReposts(posts, userId) {
@@ -321,7 +340,14 @@ function toggleLike(req, res) {
     recordLike(postId);
 
     if (post.user_id !== userId) {
-      createNotification(post.user_id, 'like', `${req.user.username} liked your post.`);
+      const snippet = postSnippet(post.content, post.post_type);
+      createNotification(
+        post.user_id,
+        'like',
+        `${req.user.username} liked your post ${snippet}`,
+        postId,
+        req.user.username
+      );
     }
     return res.json({ message: 'Post liked.', liked: true });
   }
@@ -343,6 +369,17 @@ function toggleDislike(req, res) {
   } else {
     db.prepare(`DELETE FROM likes WHERE post_id = ? AND user_id = ?`).run(postId, userId);
     db.prepare(`INSERT INTO dislikes (id, post_id, user_id) VALUES (?, ?, ?)`).run(uuidv4(), postId, userId);
+
+    if (post.user_id !== userId) {
+      const snippet = postSnippet(post.content, post.post_type);
+      createNotification(
+        post.user_id,
+        'like',
+        `${req.user.username} disliked your post ${snippet}`,
+        postId,
+        req.user.username
+      );
+    }
     return res.json({ message: 'Post disliked.', disliked: true });
   }
 }
@@ -399,7 +436,14 @@ function addComment(req, res) {
   extractAndNotifyMentions(content, userId, postId);
 
   if (post.user_id !== userId) {
-    createNotification(post.user_id, 'comment', `${req.user.username} commented on your post.`);
+    const snippet = postSnippet(post.content, post.post_type);
+    createNotification(
+      post.user_id,
+      'comment',
+      `${req.user.username} commented on your post ${snippet}`,
+      postId,
+      req.user.username
+    );
   }
 
   return res.status(201).json({ message: 'Comment added.', commentId });
@@ -502,7 +546,7 @@ function reportPost(req, res) {
   // 5. Update Post if needed
   if (postAction === 'FLAGGED' && post.status !== 'FLAGGED') {
     db.prepare(`UPDATE posts SET status = 'FLAGGED' WHERE id = ?`).run(postId);
-    createNotification(post.user_id, 'moderation_decision', 'Your post has been automatically flagged due to high toxicity score.');
+    createNotification(post.user_id, 'moderation_decision', 'Your post has been automatically flagged due to high toxicity score.', postId, null);
   }
 
   return res.status(201).json({ 

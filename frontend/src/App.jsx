@@ -21,6 +21,7 @@ import CreatorAnalytics from './pages/CreatorAnalytics';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import AcceptInvite from './pages/AcceptInvite';
+import PostDetail from './pages/PostDetail';
 
 // Components
 import Navbar from './components/Navbar';
@@ -97,6 +98,7 @@ export default function App() {
               <Route path="/notifications" element={user ? <Notifications user={user} /> : <Navigate to="/login" />} />
               <Route path="/profile" element={user ? <Profile user={user} onUpdateUser={handleLogin} onLogout={handleLogout} /> : <Navigate to="/login" />} />
               <Route path="/user/:username" element={user ? <UserProfile currentUser={user} /> : <Navigate to="/login" />} />
+              <Route path="/post/:id" element={user ? <PostDetail user={user} /> : <Navigate to="/login" />} />
               
               {/* Protected Dashboard Routes */}
               <Route path="/moderation" element={user && isAdminOrMod ? <ModerationDashboard user={user} /> : <Navigate to="/" />} />

@@ -107,7 +107,7 @@ function removePost(req, res) {
     before: { status: post.status }, after: { status: 'REMOVED' }, details: { reason }
   });
 
-  createNotification(post.user_id, 'moderation_decision', `Your post was removed. Reason: ${reason}`);
+  createNotification(post.user_id, 'moderation_decision', `Your post was removed. Reason: ${reason}`, postId, null);
 
   return res.json({ message: 'Post removed.' });
 }
@@ -145,7 +145,7 @@ function updateReportStatus(req, res) {
     before: { report_status: report.report_status }, after: { report_status: status }
   });
 
-  createNotification(report.reporter_id, 'report_outcome', `Your report has been updated to: ${status}.`);
+  createNotification(report.reporter_id, 'report_outcome', `Your report has been updated to: ${status}.`, report.post_id, null);
 
   return res.json({ message: `Report marked as ${status}.` });
 }

@@ -115,6 +115,7 @@ export const getCommunityMembers = (id) => apiFetch(`/communities/${id}/members`
 // ─────────────────────────────────────────────────────────────
 export const getNotifications = () => apiFetch('/notifications');
 export const markNotificationRead = (id) => apiFetch(`/notifications/${id}/read`, { method: 'PATCH' });
+export const markAllNotificationsRead = () => apiFetch('/notifications/read-all', { method: 'PATCH' });
 
 // ─────────────────────────────────────────────────────────────
 // MODERATION

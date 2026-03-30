@@ -220,7 +220,7 @@ export default function PostCard({ post, user }) {
             </div>
             {post.community_name && (
               <Link to={`/community/${post.community_id}`} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer text-slate-800 ml-2">
-                c/{post.community_name}
+                {post.community_name}
               </Link>
             )}
           </div>

@@ -76,7 +76,7 @@ export default function CreatePost() {
             >
               <option value="">My Profile (Public)</option>
               {communities.map(c => (
-                <option key={c.id} value={c.id}>c/{c.name}</option>
+                <option key={c.id} value={c.id}>{c.name}</option>
               ))}
             </select>
           </div>
